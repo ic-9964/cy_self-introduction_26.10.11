@@ -1,0 +1,148 @@
+/* Extracted from Sylva inner-green-3d.html; no forest, icons or scene dependencies. */
+.site-header {
+  position: sticky;
+  top: 16px;
+  z-index: 10;
+  width: 100%;
+  max-width: 100%;
+  margin: 20px auto 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+  pointer-events: none;
+}
+sylva-dock.dock-wrap {
+  --dock-u: 1.2222222222;
+  --dock-ease: cubic-bezier(.22,.61,.36,1);
+  --dock-ease-out: cubic-bezier(.16,1,.3,1);
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  pointer-events: none;
+}
+sylva-dock .dock-viewport {
+  width: max-content;
+  max-width: calc(100% - 24px);
+  min-width: 0;
+  /* Vertical breathing room remains available even when the narrow dock scrolls. */
+  padding: 0 8px 36px;
+  margin-bottom: -36px;
+  overflow: visible;
+  pointer-events: auto;
+}
+sylva-dock .dock {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: max-content;
+  height: calc(46px * var(--dock-u));
+  margin: 0 auto;
+  gap: calc(3px * var(--dock-u));
+  padding: calc(5px * var(--dock-u));
+  border: 1px solid rgba(255,255,255,.11);
+  border-radius: calc(14px * var(--dock-u));
+  background: linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,0) 42%), rgba(34,40,31,.74);
+  box-shadow: 0 calc(8px * var(--dock-u)) calc(22px * var(--dock-u)) rgba(10,14,8,.30), inset 0 1px rgba(255,255,255,.06);
+  isolation: isolate;
+  overflow: visible;
+  transform: none;
+}
+sylva-dock .dock .dock-item {
+  position: relative;
+  z-index: 6;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  min-width: 44px;
+  height: 44px;
+  padding: 0 calc(13px * var(--dock-u));
+  border: 1px solid transparent;
+  border-radius: calc(10px * var(--dock-u));
+  background: rgba(255,255,255,.04);
+  color: rgba(255,255,255,.44);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  transform-origin: 50% 0;
+  transition: color .18s var(--dock-ease), border-color .2s var(--dock-ease), background .2s var(--dock-ease);
+}
+sylva-dock .dock .dock-item[data-near="true"] {
+  z-index: 7;
+  color: #fff;
+  border-color: rgba(255,255,255,.19);
+  background: rgba(31,37,28,.94);
+  box-shadow: 0 calc(7px * var(--dock-u)) calc(16px * var(--dock-u)) rgba(10,14,8,.30);
+}
+sylva-dock .dock .dock-item.is-active {
+  background: #f2f3ef;
+  border-color: #f2f3ef;
+  color: #23261f;
+  box-shadow: 0 calc(6px * var(--dock-u)) calc(16px * var(--dock-u)) rgba(12,17,9,.24);
+  text-decoration: none;
+}
+/* Hover is temporary; only the selected route keeps this appearance on exit. */
+@media (hover: hover) and (pointer: fine) {
+  sylva-dock .dock .dock-item:hover {
+    background: #f2f3ef;
+    border-color: #f2f3ef;
+    color: #23261f;
+    box-shadow: 0 calc(6px * var(--dock-u)) calc(16px * var(--dock-u)) rgba(12,17,9,.24);
+    text-decoration: none;
+  }
+}
+sylva-dock .dock .dock-item:focus-visible {
+  outline: 2px solid rgba(255,255,255,.85);
+  outline-offset: calc(4px * var(--dock-u));
+}
+sylva-dock [data-spec] { --spec-angle: 2.4rad; --spec-bright: 0; }
+sylva-dock [data-spec]::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: 5;
+  padding: 1px;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: var(--spec-bright);
+  background: conic-gradient(from var(--spec-angle) at 50% 50%,
+    rgba(240,246,232,0) 0deg, rgba(240,246,232,.08) 14deg, rgba(240,246,232,.95) 28deg,
+    rgba(240,246,232,.16) 46deg, rgba(240,246,232,0) 68deg, rgba(240,246,232,0) 180deg,
+    rgba(240,246,232,.08) 194deg, rgba(240,246,232,.95) 208deg, rgba(240,246,232,.16) 226deg,
+    rgba(240,246,232,0) 248deg, rgba(240,246,232,0) 360deg);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+.sylva-dock-pollen { position: fixed; inset: 0; z-index: 40; pointer-events: none; }
+@media (max-width: 600px) {
+  .site-header { top: 12px; margin-top: 16px; }
+  sylva-dock .dock-viewport { overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
+  sylva-dock .dock-viewport::-webkit-scrollbar { display: none; }
+  sylva-dock .dock .dock-item { padding-inline: 12px; }
+}
+@media (hover: none), (pointer: coarse) {
+  sylva-dock [data-spec]::after { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  sylva-dock .dock, sylva-dock .dock .dock-item {
+    transform: none !important;
+    opacity: 1 !important;
+    clip-path: none !important;
+    transition: none !important;
+  }
+  sylva-dock [data-spec]::after { opacity: 0 !important; }
+  .sylva-dock-pollen { display: none; }
+}
+@media print { .site-header, .sylva-dock-pollen { display: none; } }

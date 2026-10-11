@@ -11,11 +11,28 @@
   <link href="assets/favicon.svg" rel="icon" type="image/svg+xml"/>
   <!-- CSS 负责颜色、字体、布局；defer 让 JavaScript 在 HTML 解析完成后执行。 -->
   <link href="styles.css" rel="stylesheet"/>
+  <link href="coastal.css" rel="stylesheet"/>
+  <link href="sylva-dock.css" rel="stylesheet"/>
+  <noscript>
+   <style>main > section[hidden] { display: block !important; } main > section { opacity: 1 !important; transform: none !important; }</style>
+  </noscript>
+  <link rel="preload" as="image" href="assets/coast-landscape.png" media="(min-width: 641px)"/>
+  <link rel="preload" as="image" href="assets/coast-original.jpg" media="(max-width: 640px)"/>
    <script src="works-data.js" defer></script>
   <script src="works-render.js" defer></script>
   <script src="app.js" defer></script>
+  <script src="coastal-depth.js" defer></script>
+  <script src="coastal-bubbles.js" defer></script>
+  <script src="sylva-dock.js" defer></script>
  </head>
  <body>
+  <!-- 海景在远处，透明枝叶在近处；装饰图层不参与键盘和读屏操作。 -->
+  <div class="coastal-scene" aria-hidden="true">
+   <div class="coastal-distance"></div>
+   <div class="coastal-atmosphere"></div>
+  </div>
+  <div class="coastal-foreground" aria-hidden="true"></div>
+  <coastal-bubbles aria-hidden="true"></coastal-bubbles>
   <a class="skip-link" href="#main">
    跳到正文
   </a>
@@ -23,53 +40,52 @@
   <div class="reading-progress" id="reading-progress">
   </div>
   <header class="site-header">
-   <div class="container header-inner">
-    <a class="brand" href="#about">
-     我的主页
-    </a>
-    <!-- href="#栏目ID" 是原生锚点：即使不加载 JavaScript，也能跳到对应栏目。 -->
-    <nav aria-label="主导航">
-     <a href="#about">
+   <sylva-dock class="dock-wrap">
+    <div class="dock-viewport">
+    <!-- 每个 hash 对应一个独立板块，JavaScript 同步显示状态和浏览器历史。 -->
+    <nav class="dock" data-spec aria-label="主导航">
+     <a class="dock-item" data-dock data-spec href="#about">
       关于
      </a>
-     <a href="#experience">
+     <a class="dock-item" data-dock data-spec href="#experience">
       经历
      </a>
-     <a href="#projects">
+     <a class="dock-item" data-dock data-spec href="#projects">
       科研
      </a>
-     <a href="#skills">
+     <a class="dock-item" data-dock data-spec href="#skills">
       技能
      </a>
-     <a href="#portfolio">
+     <a class="dock-item" data-dock data-spec href="#portfolio">
       作品
      </a>
-     <a href="#teaching">
+     <a class="dock-item" data-dock data-spec href="#teaching">
       教学
      </a>
-     <a href="#publications">
+     <a class="dock-item" data-dock data-spec href="#publications">
       成果
      </a>
     </nav>
-   </div>
+    </div>
+   </sylva-dock>
   </header>
-  <main id="main">
+  <main id="main" tabindex="-1">
    <!-- HTML 练习：修改姓名、研究方向、照片路径和联系方式。 -->
    <section class="hero" id="about">
     <div class="container">
      <div class="hero-top">
       <div class="hero-copy">
        <h1>
-        林同学
+        陈粤
         <span>
-         Lin
+         Chen Yue
         </span>
        </h1>
        <p class="hero-role">
-        软件技术专业学生 · 前端开发学习者
+        人工智能技术应用专业学生 · 大模型开发学习者
        </p>
        <p class="hero-school">
-        我的学校 · 我的班级
+        广东科学技术职业学院 · 25大模型应用开发
        </p>
       </div>
       <div class="hero-visual">
@@ -108,7 +124,7 @@
         联系
        </span>
        <p>
-        请填写可公开的联系方式
+        17260126038
        </p>
       </div>
       <div>
@@ -116,14 +132,14 @@
         学校地址
        </span>
        <p>
-        请填写自己的学校地址
+        广东省珠海市金湾区广东科学技术职业学院
        </p>
       </div>
      </div>
     </div>
    </section>
    <!-- 每个栏目复用 section → container → 标题/内容 的结构，统一由 CSS 控制样式。 -->
-   <section class="section" id="experience">
+   <section class="section" id="experience" hidden>
     <div class="container">
      <header class="section-heading">
       <h2>
@@ -135,7 +151,7 @@
       <div class="experience-item">
        <p class="experience-heading">
         <strong>
-         我的学校 · 软件技术专业
+         广东科学技术职业学院 · 人工智能技术应用专业
         </strong>
         <time>
          在读
@@ -148,7 +164,7 @@
      </div>
     </div>
    </section>
-   <section class="section" id="projects">
+   <section class="section" id="projects" hidden>
     <div class="container">
      <header class="section-heading">
       <h2>
@@ -170,7 +186,7 @@
      </div>
     </div>
    </section>
-   <section class="section" id="skills">
+   <section class="section" id="skills" hidden>
     <div class="container">
      <header class="section-heading">
       <h2>
@@ -201,7 +217,7 @@
      </div>
     </div>
    </section>
-   <section class="section" id="portfolio">
+   <section class="section" id="portfolio" hidden>
     <div class="container">
      <header class="section-heading">
       <h2>
@@ -284,7 +300,7 @@
      </ol>
     </div>
    </section>
-   <section class="section" id="teaching">
+   <section class="section" id="teaching" hidden>
     <div class="container">
      <header class="section-heading">
       <h2>
@@ -311,7 +327,7 @@
      </div>
     </div>
    </section>
-   <section class="section" id="publications">
+   <section class="section" id="publications" hidden>
     <div class="container">
      <header class="section-heading">
       <h2>
@@ -342,15 +358,5 @@
   <button aria-label="返回页面顶部" class="to-top" id="to-top" type="button">
    ↑
   </button>
-  <footer>
-   <div class="container footer-inner">
-    <a href="#about">
-     回到顶部
-    </a>
-    <a href="#portfolio">
-     作品门户
-    </a>
-   </div>
-  </footer>
  </body>
 </html>

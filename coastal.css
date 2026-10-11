@@ -1,0 +1,172 @@
+/* 海景的远景、中景正文和近景枝叶分别绘制，避免整张图一起移动。 */
+:root {
+  --text: #233e39;
+  --muted: #3b5650;
+  --heading: #164c43;
+  --accent: #246b60;
+  --subheading: #375740;
+  --line: #c4d1c080;
+  --heading-wash: rgb(255 255 255 / .2);
+  --background: #1b797b;
+  /* 中性的透光层让海水、岩壁和绿植的颜色自然透出，无需固定底色。 */
+  --glass-fill: rgb(255 255 255 / .44);
+  --glass-inner: rgb(255 255 255 / .26);
+  --glass-filter: blur(26px) saturate(1.18) brightness(1.25);
+  --depth-x: 0px;
+  --depth-y: 0px;
+  --near-x: 0px;
+  --near-y: 0px;
+}
+
+/* 浮动导航及其上下留白也计入锚点间距，避免直达栏目时内容被自动顶上去。 */
+html { scroll-padding-top: 160px; }
+/* Decorative air bubbles stay above the scene and never intercept interaction. */
+coastal-bubbles {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: block;
+  overflow: hidden;
+  contain: strict;
+  pointer-events: none;
+  user-select: none;
+}
+coastal-bubbles canvas { display: block; width: 100%; height: 100%; pointer-events: none; }
+@media (prefers-reduced-motion: reduce), (hover: none), (pointer: coarse) {
+  coastal-bubbles { display: none; }
+}
+body { position: relative; isolation: isolate; min-height: 100svh; }
+.coastal-scene,
+.coastal-foreground { position: fixed; inset: 0; pointer-events: none; user-select: none; }
+.coastal-scene { z-index: -1; overflow: hidden; background: #277d79; }
+.coastal-distance {
+  position: absolute;
+  inset: -5%;
+  background: url("assets/coast-landscape.png") center 54% / cover no-repeat;
+  filter: saturate(.88) brightness(.91);
+  transform: translate3d(var(--depth-x), var(--depth-y), 0);
+}
+.coastal-atmosphere {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #082c2d0d, #123d3314 65%, #0a302b42),
+    radial-gradient(ellipse at 50% 35%, transparent 35%, #082e3029 100%);
+}
+.coastal-foreground {
+  z-index: 2;
+  inset: -3%;
+  background: url("assets/coast-foreground.png") center bottom / cover no-repeat;
+  filter: blur(3px) saturate(.85) brightness(.88);
+  transform: translate3d(var(--near-x), var(--near-y), 0);
+  /* 只让边缘的枝叶浮到正文前面，中央阅读区保持通透。 */
+  mask-image: linear-gradient(90deg, #000 0%, #000c 7%, transparent 20%, transparent 80%, #000c 93%, #000 100%);
+  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000c 7%, transparent 20%, transparent 80%, #000c 93%, #000 100%);
+}
+
+
+main {
+  position: relative;
+  z-index: 1;
+  width: min(1080px, calc(100% - 120px));
+  margin: 40px auto 32px;
+}
+main .container { width: calc(100% - 88px); }
+/* 每次只展示一个板块，其余板块由原生 hidden 属性退出布局和键盘顺序。 */
+.panel-navigation main > section:not([hidden]) {
+  margin-bottom: 0;
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .panel-navigation main > section:not([hidden]) { animation: panel-enter .28s ease-out; }
+  @keyframes panel-enter {
+    from { opacity: .65; transform: translateY(12px); }
+    to { opacity: 1; transform: none; }
+  }
+}
+/* 板块接收程序焦点供读屏定位，键盘操作的可见焦点由导航和内容控件显示。 */
+.panel-navigation main > section:focus { outline: none; }
+.hero,
+.section {
+  margin-bottom: 24px;
+  padding: 36px 0 38px;
+  border: 1px solid #ffffffb3;
+  border-radius: 18px;
+  background: var(--glass-fill);
+  backdrop-filter: var(--glass-filter);
+  -webkit-backdrop-filter: var(--glass-filter);
+  box-shadow: 0 18px 56px #082d3429, inset 0 1px 0 #ffffffc7;
+}
+.hero { padding-top: 40px; }
+.hero-visual figure {
+  border-color: #fff;
+  border-radius: 10px;
+  background: var(--glass-inner);
+  box-shadow: 0 12px 32px #123c3221;
+  transform: rotate(2deg);
+}
+.hero-visual img { border-radius: 4px; }
+.profile-details { padding-top: 20px; border-top: 1px solid var(--line); }
+.section-heading h2 { background: var(--heading-wash); border-left-color: #78947e; }
+#portfolio { background: var(--glass-fill); }
+.work-card > a { background: var(--glass-inner); border-color: #ffffff80; border-radius: 10px; }
+.work-card > a:hover { box-shadow: 0 14px 30px #153f3626; border-color: #729b86; }
+.work-cover,
+.work-community .work-cover,
+.work-greeting-card .work-cover,
+.work-music-station .work-cover { background: rgb(255 255 255 / .12); }
+.work-copy p { color: var(--muted); }
+.works-tags button,
+.works-sort { background: var(--glass-inner); border-color: #ffffff80; color: var(--text); }
+.section-indicator { background: #164c43e6; box-shadow: 0 6px 20px #0c363b33; }
+.to-top { background: var(--glass-fill); backdrop-filter: var(--glass-filter); -webkit-backdrop-filter: var(--glass-filter); border-color: #ffffffb3; box-shadow: 0 6px 20px #0c363b33; }
+.reading-progress { background: linear-gradient(90deg, #a8c39a, #28786a); }
+@media (max-width: 1000px) {
+  main { width: calc(100% - 64px); }
+  main { margin-top: 32px; }
+  main .container { width: calc(100% - 56px); }
+  .coastal-foreground { opacity: .75; }
+}
+@media (max-width: 640px) {
+  .coastal-distance {
+    background-image: url("assets/coast-original.jpg");
+    background-position: 52% 48%;
+    filter: saturate(.9) brightness(.92);
+  }
+  .coastal-foreground { display: none; }
+
+  main { width: calc(100% - 28px); }
+  main { margin-top: 24px; margin-bottom: 20px; }
+  main .container { width: calc(100% - 36px); }
+  .hero, .section { padding: 26px 0; border-radius: 14px; margin-bottom: 16px; }
+  .hero { padding-top: 28px; }
+  h1 { padding-right: 132px; min-height: 132px; font-size: 34px; letter-spacing: 0; }
+  h1 span { font-size: 23px; }
+  .hero-visual img { width: 112px; height: 112px; }
+  .profile-details { gap: 14px; }
+  .profile-details p { overflow-wrap: anywhere; }
+}
+/* 不支持背景模糊的浏览器使用更实的透光层，避免照片纹理干扰正文。 */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :root { --glass-fill: rgb(255 255 255 / .82); --glass-inner: rgb(255 255 255 / .6); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .coastal-distance, .coastal-foreground { transform: none; }
+
+}
+@media print {
+  body { background: #fff; }
+  .coastal-scene, .coastal-foreground { display: none; }
+  main { width: 100%; margin: 0; }
+  main .container { width: 100%; }
+  .hero, .section, #portfolio {
+    background: #fff;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: 0;
+    border-radius: 0;
+  }
+  .hero-visual figure { transform: none; box-shadow: none; }
+}
+
