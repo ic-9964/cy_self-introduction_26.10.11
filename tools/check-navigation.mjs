@@ -33,7 +33,7 @@ try {
   assert.equal(await page.locator('footer:visible').count(), 0);
   assert.equal(await page.locator('.brand').count(), 0);
 
-  for (const id of ['experience', 'projects', 'skills', 'portfolio', 'teaching', 'publications', 'about']) {
+  for (const id of ['experience', 'projects', 'skills', 'about']) {
     await page.locator(`nav a[href="#${id}"]`).click();
     await expectPanel(id);
     assert.equal(new URL(page.url()).hash, `#${id}`);
@@ -49,23 +49,17 @@ try {
   await page.reload({ waitUntil: 'networkidle' });
   await expectPanel('skills');
 
-  await page.goto(`${base.split('#')[0]}#portfolio`, { waitUntil: 'networkidle' });
-  await expectPanel('portfolio');
-  assert.equal(await page.locator('.work-card').count(), 4);
-  await page.getByRole('button', { name: 'AI', exact: true }).click();
-  assert.equal(await page.locator('.work-card').count(), 1);
-  await page.getByRole('button', { name: '全部', exact: true }).click();
-  await page.locator('#works-sort').click();
-  assert.equal(await page.locator('.work-year').first().textContent(), '2025');
+  await page.goto(`${base.split('#')[0]}#experience`, { waitUntil: 'networkidle' });
+  await expectPanel('experience');
 
   await page.setViewportSize({ width: 390, height: 640 });
   await page.evaluate(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'instant' }));
   await page.waitForTimeout(150);
-  await expectPanel('portfolio');
+  await expectPanel('experience');
   await page.locator('#to-top').click();
   await page.waitForFunction(() => window.scrollY === 0);
-  await expectPanel('portfolio');
-  assert.equal(new URL(page.url()).hash, '#portfolio');
+  await expectPanel('experience');
+  assert.equal(new URL(page.url()).hash, '#experience');
 
   const skillsLink = page.locator('nav a[href="#skills"]');
   await skillsLink.focus();
@@ -91,7 +85,7 @@ try {
   assert.equal(await page.evaluate(() => window.scrollY), 0,
     'A direct panel link must keep the content below the floating navigation');
   assert.deepEqual(errors, []);
-  console.log('PASS: seven exclusive panels, navigation, history, reload, direct links, filtering, sorting, scroll, keyboard, mobile, invalid hashes.');
+  console.log('PASS: four exclusive panels, navigation, history, reload, direct links, scroll, keyboard, mobile, invalid hashes.');
 } finally {
   await browser.close();
 }

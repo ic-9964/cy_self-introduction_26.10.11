@@ -92,7 +92,7 @@ try {
   await page.waitForFunction(() => document.querySelector('.dock-item.is-active')?.hash === '#projects');
 
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.locator('nav a[href="#teaching"]').click();
+  await page.locator('nav a[href="#skills"]').click();
   await delay(150);
   const reduced = await read();
   assert(reduced.items.every(st => st.width === st.baseWidth && st.height === st.baseHeight && st.value === 0));
@@ -121,8 +121,8 @@ try {
   const targets = await touch.locator('.dock-item').evaluateAll(links => links.map(link => ({ width: link.getBoundingClientRect().width, height: link.getBoundingClientRect().height })));
   assert(targets.every(r => r.width >= 44 && r.height >= 44));
   assert(await touch.locator('.dock-item').evaluateAll(links => links.every(link => getComputedStyle(link).fontSize === '16px')));
-  await touch.locator('nav a[href="#publications"]').tap();
-  assert.equal(await touch.locator('main > section:visible').getAttribute('id'), 'publications');
+  await touch.locator('nav a[href="#skills"]').tap();
+  assert.equal(await touch.locator('main > section:visible').getAttribute('id'), 'skills');
   assert(await touch.locator('.dock-viewport').evaluate(el => el.scrollLeft > 0));
   assert(await touch.locator('sylva-dock').evaluate(el => el.items.every(st => st.target === 0 && st.el.dataset.near === 'false')));
   await touch.locator('sylva-dock').evaluate(el => { window.removedDock = el; el.remove(); });
